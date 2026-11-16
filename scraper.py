@@ -97,17 +97,57 @@ def scrape_home(page):
     m = re.search(r"Market Status:\s*(\w+).*?Current Trading Date\s*-\s*([\d/]+)", body, re.S)
     if m:
         manifest["market_status"] = {"status": m.group(1), "trading_date": m.group(2)}
-    for tab in HOME_TABS:
+    page.wait_for_timeout(3000)
+    save_api_json()
+
+
+def find_rows(obj):
+    """Return the largest list of dicts found anywhere in a JSON object."""
+    best = []
+
+    def walk(o):
+        nonlocal best
+        if isinstance(o, list):
+            if o and all(isinstance(x, dict) for x in o) and len(o) > len(best):
+                best = o
+            for x in o:
+                walk(x)
+        elif isinstance(o, dict):
+            for v in o.values():
+                walk(v)
+
+    walk(obj)
+    if not best and isinstance(obj, dict):
+        best = [obj]
+    return best
+
+
+def save_api_json():
+    """Save every nseticker API response (gainers, losers, movers, ticker) as JSON + CSV."""
+    latest = {}
+    for n in net_log:
+        if "/nseticker/api/" in n["url"] and n["status"] == 200:
+            latest[n["url"]] = n
+    for url, n in latest.items():
+        name = slug(url.split("/api/")[-1])
         try:
-            el = page.get_by_text(tab, exact=True).first
-            el.scroll_into_view_if_needed(timeout=8000)
-            el.click(timeout=8000, force=True)
-            settle(page, 800)
-            tables = [t for t in visible_tables(page) if "Change" in json.dumps(t)]
-            save("home", tab, tables, as_of(page))
+            data = json.loads(n["body"])
         except Exception as e:
-            manifest["errors"].append(f"home/{tab}: {e}")
-            page.screenshot(path=str(OUT / f"error_home_{slug(tab)}.png"))
+            manifest["errors"].append(f"api/{name}: bad json ({e})")
+            continue
+        (OUT / f"api_{name}.json").write_text(n["body"], encoding="utf-8")
+        rows = find_rows(data)
+        if not rows:
+            manifest["entries"].append({"section": "api", "option": name, "rows": 0, "note": "no data"})
+            continue
+        keys = list(dict.fromkeys(k for r in rows for k in r))
+        fname = f"api_{name}.csv"
+        with open(OUT / fname, "w", newline="", encoding="utf-8") as f:
+            w = csv.writer(f)
+            w.writerow(["scraped_at"] + keys)
+            for r in rows:
+                w.writerow([NOW.isoformat()] + [json.dumps(r.get(k)) if isinstance(r.get(k), (dict, list)) else r.get(k, "") for k in keys])
+        manifest["entries"].append({"section": "api", "option": name, "rows": len(rows), "file": fname})
 
 
 def scrape_stats(page):
@@ -151,7 +191,7 @@ def main():
                         "method": resp.request.method,
                         "post_data": resp.request.post_data,
                         "status": resp.status,
-                        "body": resp.text()[:20000],
+                        "body": resp.text()[:500000 if "/nseticker/" in resp.url else 20000],
                     })
             except Exception:
                 pass
