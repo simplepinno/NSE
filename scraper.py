@@ -99,12 +99,15 @@ def scrape_home(page):
         manifest["market_status"] = {"status": m.group(1), "trading_date": m.group(2)}
     for tab in HOME_TABS:
         try:
-            page.get_by_text(tab, exact=True).first.click(timeout=8000)
+            el = page.get_by_text(tab, exact=True).first
+            el.scroll_into_view_if_needed(timeout=8000)
+            el.click(timeout=8000, force=True)
             settle(page, 800)
             tables = [t for t in visible_tables(page) if "Change" in json.dumps(t)]
             save("home", tab, tables, as_of(page))
         except Exception as e:
             manifest["errors"].append(f"home/{tab}: {e}")
+            page.screenshot(path=str(OUT / f"error_home_{slug(tab)}.png"))
 
 
 def scrape_stats(page):
@@ -164,6 +167,18 @@ def main():
 
     (OUT / "network_log.json").write_text(json.dumps(net_log, indent=1), encoding="utf-8")
     (OUT / "manifest.json").write_text(json.dumps(manifest, indent=1), encoding="utf-8")
+    summary = [
+        f"{n['method']} {n['status']} {n['url']} post={str(n['post_data'])[:200]} len={len(n['body'])}"
+        for n in net_log
+        if "google" not in n["url"] and "cookie" not in n["url"].lower()
+    ]
+    (OUT / "network_summary.txt").write_text("\n".join(summary), encoding="utf-8")
+    print("=== ERRORS ===")
+    for err in manifest["errors"]:
+        print(err[:300])
+    print("=== NETWORK (first 25) ===")
+    for line in summary[:25]:
+        print(line)
     files = sum(1 for e in manifest["entries"] if "file" in e)
     print(f"Saved {files} tables, {len(manifest['errors'])} errors, {len(net_log)} network calls logged")
     sys.exit(0 if files else 1)
