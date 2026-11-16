@@ -1,0 +1,398 @@
+{
+ "scraped_at": "2026-11-16T20:31:57.595952+03:00",
+ "market_status": {
+  "status": "Closed",
+  "trading_date": "16/11/2026"
+ },
+ "entries": [
+  {
+   "section": "Market Statistics Summary",
+   "option": "all",
+   "table": 0,
+   "rows": 17,
+   "as_of": "13-Nov-2026",
+   "file": "market_statistics_summary__all__0.csv"
+  },
+  {
+   "section": "Market Statistics Summary",
+   "option": "all",
+   "table": 1,
+   "rows": 6,
+   "as_of": "13-Nov-2026",
+   "file": "market_statistics_summary__all__1.csv"
+  },
+  {
+   "section": "Market Statistics Summary",
+   "option": "all",
+   "table": 2,
+   "rows": 0,
+   "as_of": "13-Nov-2026",
+   "note": "no data"
+  },
+  {
+   "section": "Market Statistics Summary",
+   "option": "all",
+   "table": 3,
+   "rows": 4,
+   "as_of": "13-Nov-2026",
+   "file": "market_statistics_summary__all__3.csv"
+  },
+  {
+   "section": "Market Statistics Summary",
+   "option": "all",
+   "table": 4,
+   "rows": 5,
+   "as_of": "13-Nov-2026",
+   "file": "market_statistics_summary__all__4.csv"
+  },
+  {
+   "section": "Market Statistics Summary",
+   "option": "all",
+   "table": 5,
+   "rows": 1,
+   "as_of": "13-Nov-2026",
+   "file": "market_statistics_summary__all__5.csv"
+  },
+  {
+   "section": "Equity Statistics",
+   "option": "AGRICULTURAL",
+   "table": 0,
+   "rows": 6,
+   "as_of": "16-Nov-2026",
+   "file": "equity_statistics__agricultural__0.csv"
+  },
+  {
+   "section": "Equity Statistics",
+   "option": "AUTOMOBILES",
+   "table": 0,
+   "rows": 1,
+   "as_of": "16-Nov-2026",
+   "file": "equity_statistics__automobiles__0.csv"
+  },
+  {
+   "section": "Equity Statistics",
+   "option": "BANKING",
+   "table": 0,
+   "rows": 13,
+   "as_of": "16-Nov-2026",
+   "file": "equity_statistics__banking__0.csv"
+  },
+  {
+   "section": "Equity Statistics",
+   "option": "COMMERCIAL",
+   "table": 0,
+   "rows": 14,
+   "as_of": "16-Nov-2026",
+   "file": "equity_statistics__commercial__0.csv"
+  },
+  {
+   "section": "Equity Statistics",
+   "option": "CONSTRUCTION",
+   "table": 0,
+   "rows": 5,
+   "as_of": "16-Nov-2026",
+   "file": "equity_statistics__construction__0.csv"
+  },
+  {
+   "section": "Equity Statistics",
+   "option": "ENERGY",
+   "table": 0,
+   "rows": 5,
+   "as_of": "16-Nov-2026",
+   "file": "equity_statistics__energy__0.csv"
+  },
+  {
+   "section": "Equity Statistics",
+   "option": "INSURANCE",
+   "table": 0,
+   "rows": 6,
+   "as_of": "16-Nov-2026",
+   "file": "equity_statistics__insurance__0.csv"
+  },
+  {
+   "section": "Equity Statistics",
+   "option": "INVESTMENT",
+   "table": 0,
+   "rows": 5,
+   "as_of": "16-Nov-2026",
+   "file": "equity_statistics__investment__0.csv"
+  },
+  {
+   "section": "Equity Statistics",
+   "option": "INVESTMENT SERVICES",
+   "table": 0,
+   "rows": 1,
+   "as_of": "16-Nov-2026",
+   "file": "equity_statistics__investment_services__0.csv"
+  },
+  {
+   "section": "Equity Statistics",
+   "option": "MANUFACTURING",
+   "table": 0,
+   "rows": 9,
+   "as_of": "16-Nov-2026",
+   "file": "equity_statistics__manufacturing__0.csv"
+  },
+  {
+   "section": "Equity Statistics",
+   "option": "TELECOMMUNICATION",
+   "table": 0,
+   "rows": 1,
+   "as_of": "16-Nov-2026",
+   "file": "equity_statistics__telecommunication__0.csv"
+  },
+  {
+   "section": "Equity Statistics",
+   "option": "REAL ESTATE",
+   "table": 0,
+   "rows": 3,
+   "as_of": "16-Nov-2026",
+   "file": "equity_statistics__real_estate__0.csv"
+  },
+  {
+   "section": "Equity Statistics",
+   "option": "ETF",
+   "table": 0,
+   "rows": 2,
+   "as_of": "16-Nov-2026",
+   "file": "equity_statistics__etf__0.csv"
+  },
+  {
+   "section": "Bonds Statistics",
+   "option": "TWO YEAR BONDS",
+   "table": 0,
+   "rows": 0,
+   "as_of": "16-Nov-2026",
+   "note": "no data"
+  },
+  {
+   "section": "Bonds Statistics",
+   "option": "FIVE YEAR BONDS",
+   "table": 0,
+   "rows": 1,
+   "as_of": "16-Nov-2026",
+   "file": "bonds_statistics__five_year_bonds__0.csv"
+  },
+  {
+   "section": "Bonds Statistics",
+   "option": "TEN YEAR BONDS",
+   "table": 0,
+   "rows": 10,
+   "as_of": "16-Nov-2026",
+   "file": "bonds_statistics__ten_year_bonds__0.csv"
+  },
+  {
+   "section": "Bonds Statistics",
+   "option": "FIFTEEN YEAR BONDS",
+   "table": 0,
+   "rows": 10,
+   "as_of": "16-Nov-2026",
+   "file": "bonds_statistics__fifteen_year_bonds__0.csv"
+  },
+  {
+   "section": "Bonds Statistics",
+   "option": "TWENTY YEAR BOND",
+   "table": 0,
+   "rows": 10,
+   "as_of": "16-Nov-2026",
+   "file": "bonds_statistics__twenty_year_bond__0.csv"
+  },
+  {
+   "section": "Bonds Statistics",
+   "option": "TWENTY FIVE YEAR BOND",
+   "table": 0,
+   "rows": 9,
+   "as_of": "16-Nov-2026",
+   "file": "bonds_statistics__twenty_five_year_bond__0.csv"
+  },
+  {
+   "section": "Bonds Statistics",
+   "option": "THIRTY YEAR BOND",
+   "table": 0,
+   "rows": 7,
+   "as_of": "16-Nov-2026",
+   "file": "bonds_statistics__thirty_year_bond__0.csv"
+  },
+  {
+   "section": "Bonds Statistics",
+   "option": "INFRASTRUCTURE BONDS",
+   "table": 0,
+   "rows": 28,
+   "as_of": "16-Nov-2026",
+   "file": "bonds_statistics__infrastructure_bonds__0.csv"
+  },
+  {
+   "section": "Bonds Statistics",
+   "option": "GOVERNMENT OF KENYA FIXED RATE TREASURY BONDS BELOW KES.50 MILLION",
+   "table": 0,
+   "rows": 111,
+   "as_of": "16-Nov-2026",
+   "file": "bonds_statistics__government_of_kenya_fixed_rate_treasury_bonds_below_kes_50_million__0.csv"
+  },
+  {
+   "section": "Bonds Statistics",
+   "option": "CHASE BANK FIXED MEDIUM TERM NOTE",
+   "table": 0,
+   "rows": 182,
+   "as_of": "16-Nov-2026",
+   "file": "bonds_statistics__chase_bank_fixed_medium_term_note__0.csv"
+  },
+  {
+   "section": "Bonds Statistics",
+   "option": "REAL PEOPLE MEDIUM TERM NOTE",
+   "table": 0,
+   "rows": 0,
+   "as_of": "16-Nov-2026",
+   "note": "no data"
+  },
+  {
+   "section": "Bonds Statistics",
+   "option": "ACORN GREEN BOND MEDIUM TERM NOTE",
+   "table": 0,
+   "rows": 191,
+   "as_of": "16-Nov-2026",
+   "file": "bonds_statistics__acorn_green_bond_medium_term_note__0.csv"
+  },
+  {
+   "section": "Bonds Statistics",
+   "option": "CENTUM REAL ESTATE LIMITED MEDIUM TERM NOTE (SENIOR SECURED)",
+   "table": 0,
+   "rows": 183,
+   "as_of": "16-Nov-2026",
+   "file": "bonds_statistics__centum_real_estate_limited_medium_term_note_senior_secured__0.csv"
+  },
+  {
+   "section": "Bonds Statistics",
+   "option": "FAMILY BANK MEDIUM TERM NOTE",
+   "table": 0,
+   "rows": 2,
+   "as_of": "16-Nov-2026",
+   "file": "bonds_statistics__family_bank_medium_term_note__0.csv"
+  },
+  {
+   "section": "Bonds Statistics",
+   "option": "EAST AFRICAN BREWERIES DOMESTIC MEDIUM TERM NOTE",
+   "table": 0,
+   "rows": 6,
+   "as_of": "16-Nov-2026",
+   "file": "bonds_statistics__east_african_breweries_domestic_medium_term_note__0.csv"
+  },
+  {
+   "section": "Derivatives Statistics",
+   "option": "INDEX (N25I",
+   "table": 0,
+   "rows": 4,
+   "as_of": "16-Nov-2026",
+   "file": "derivatives_statistics__index_n25i__0.csv"
+  },
+  {
+   "section": "Derivatives Statistics",
+   "option": "INDEX (25MN)",
+   "table": 0,
+   "rows": 12,
+   "as_of": "16-Nov-2026",
+   "file": "derivatives_statistics__index_25mn__0.csv"
+  },
+  {
+   "section": "Derivatives Statistics",
+   "option": "SINGLE STOCK FUTURE (SCOM)",
+   "table": 0,
+   "rows": 4,
+   "as_of": "16-Nov-2026",
+   "file": "derivatives_statistics__single_stock_future_scom__0.csv"
+  },
+  {
+   "section": "Derivatives Statistics",
+   "option": "SINGLE STOCK FUTURE (EQTY)",
+   "table": 0,
+   "rows": 4,
+   "as_of": "16-Nov-2026",
+   "file": "derivatives_statistics__single_stock_future_eqty__0.csv"
+  },
+  {
+   "section": "Derivatives Statistics",
+   "option": "SINGLE STOCK FUTURE (KCBG)",
+   "table": 0,
+   "rows": 4,
+   "as_of": "16-Nov-2026",
+   "file": "derivatives_statistics__single_stock_future_kcbg__0.csv"
+  },
+  {
+   "section": "Derivatives Statistics",
+   "option": "SINGLE STOCK FUTURE (EABL)",
+   "table": 0,
+   "rows": 4,
+   "as_of": "16-Nov-2026",
+   "file": "derivatives_statistics__single_stock_future_eabl__0.csv"
+  },
+  {
+   "section": "Derivatives Statistics",
+   "option": "SINGLE STOCK FUTURE (BATK)",
+   "table": 0,
+   "rows": 4,
+   "as_of": "16-Nov-2026",
+   "file": "derivatives_statistics__single_stock_future_batk__0.csv"
+  },
+  {
+   "section": "Derivatives Statistics",
+   "option": "SINGLE STOCK FUTURE (ABSA)",
+   "table": 0,
+   "rows": 4,
+   "as_of": "16-Nov-2026",
+   "file": "derivatives_statistics__single_stock_future_absa__0.csv"
+  },
+  {
+   "section": "Derivatives Statistics",
+   "option": "SINGLE STOCK FUTURE (NCBA)",
+   "table": 0,
+   "rows": 4,
+   "as_of": "16-Nov-2026",
+   "file": "derivatives_statistics__single_stock_future_ncba__0.csv"
+  },
+  {
+   "section": "Derivatives Statistics",
+   "option": "SINGLE STOCK FUTURE (COOP)",
+   "table": 0,
+   "rows": 4,
+   "as_of": "16-Nov-2026",
+   "file": "derivatives_statistics__single_stock_future_coop__0.csv"
+  },
+  {
+   "section": "Derivatives Statistics",
+   "option": "SINGLE STOCK FUTURE (SCBK)",
+   "table": 0,
+   "rows": 4,
+   "as_of": "16-Nov-2026",
+   "file": "derivatives_statistics__single_stock_future_scbk__0.csv"
+  },
+  {
+   "section": "Derivatives Statistics",
+   "option": "SINGLE STOCK FUTURE (IMHP)",
+   "table": 0,
+   "rows": 24,
+   "as_of": "16-Nov-2026",
+   "file": "derivatives_statistics__single_stock_future_imhp__0.csv"
+  },
+  {
+   "section": "USP Statistics",
+   "option": "all",
+   "table": 0,
+   "rows": 5,
+   "as_of": "30-Oct-2026",
+   "file": "usp_statistics__all__0.csv"
+  },
+  {
+   "section": "USP Statistics",
+   "option": "all",
+   "table": 1,
+   "rows": 1,
+   "as_of": "30-Oct-2026",
+   "file": "usp_statistics__all__1.csv"
+  }
+ ],
+ "errors": [
+  "home/Gainers: Locator.click: Timeout 8000ms exceeded.\nCall log:\n  - waiting for get_by_text(\"Gainers\", exact=True).first\n  -     - locator resolved to <span>Gainers</span>\n  -   - attempting click action\n  -     2 \u00d7 waiting for element to be visible, enabled and stable\n  -       - element is not visible\n  -     - retrying click action\n  -     - waiting 20ms\n  -     2 \u00d7 waiting for element to be visible, enabled and stable\n  -       - element is not visible\n  -     - retrying click action\n  -       - waiting 100ms\n  -     15 \u00d7 waiting for element to be visible, enabled and stable\n  -        - element is not visible\n  -      - retrying click action\n  -        - waiting 500ms\n",
+  "home/Losers: Locator.click: Timeout 8000ms exceeded.\nCall log:\n  - waiting for get_by_text(\"Losers\", exact=True).first\n  -     - locator resolved to <span>Losers</span>\n  -   - attempting click action\n  -     2 \u00d7 waiting for element to be visible, enabled and stable\n  -       - element is not visible\n  -     - retrying click action\n  -     - waiting 20ms\n  -     2 \u00d7 waiting for element to be visible, enabled and stable\n  -       - element is not visible\n  -     - retrying click action\n  -       - waiting 100ms\n  -     15 \u00d7 waiting for element to be visible, enabled and stable\n  -        - element is not visible\n  -      - retrying click action\n  -        - waiting 500ms\n",
+  "home/Movers: Locator.click: Timeout 8000ms exceeded.\nCall log:\n  - waiting for get_by_text(\"Movers\", exact=True).first\n  -     - locator resolved to <span>Movers</span>\n  -   - attempting click action\n  -     2 \u00d7 waiting for element to be visible, enabled and stable\n  -       - element is not visible\n  -     - retrying click action\n  -     - waiting 20ms\n  -     2 \u00d7 waiting for element to be visible, enabled and stable\n  -       - element is not visible\n  -     - retrying click action\n  -       - waiting 100ms\n  -     15 \u00d7 waiting for element to be visible, enabled and stable\n  -        - element is not visible\n  -      - retrying click action\n  -        - waiting 500ms\n"
+ ]
+}
