@@ -4,10 +4,12 @@ Opens nse.co.ke, clicks through every tab and dropdown option, and saves every
 visible table as CSV under data/YYYY-MM-DD/HHMM/. Also logs the background
 (JSON/AJAX) requests the page makes, so a direct data feed can be found later.
 """
+import base64
 import csv
 import json
 import re
 import sys
+import urllib.request
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -35,8 +37,14 @@ net_log = []
 JS_TABLES = r"""
 () => [...document.querySelectorAll('table')]
   .filter(t => t.offsetParent !== null)
-  .map(t => [...t.querySelectorAll('tr')].map(tr =>
-      [...tr.querySelectorAll('th,td')].map(c => c.innerText.trim().replace(/\s+/g, ' '))))
+  .map(t => [...t.querySelectorAll('tr')]
+      // only this table's own rows (not rows of tables nested inside it)
+      .filter(tr => tr.closest('table') === t)
+      .map(tr => [...tr.children]
+          .filter(c => c.tagName === 'TH' || c.tagName === 'TD')
+          // a cell that wraps a nested table is blank here; the nested table is saved on its own
+          .map(c => c.querySelector('table') ? '' : c.innerText.trim().replace(/\s+/g, ' ')))
+      .filter(r => r.some(c => c !== '')))
 """
 
 
@@ -153,6 +161,49 @@ def save_api_json():
         manifest["entries"].append({"section": "api", "option": name, "rows": len(rows), "file": fname})
 
 
+JS_FETCH = r"""
+async (url) => {
+  const r = await fetch(url, {credentials: 'include'});
+  if (!r.ok) return {status: r.status};
+  const blob = await r.blob();
+  const b64 = await new Promise((res, rej) => {
+    const fr = new FileReader();
+    fr.onload = () => res(String(fr.result).split(',')[1] || '');
+    fr.onerror = rej;
+    fr.readAsDataURL(blob);
+  });
+  return {status: r.status, b64};
+}
+"""
+
+
+def fetch_pdf(page, href):
+    """Download via the browser's own network stack (Playwright's request.get chokes on
+    NSE's response headers: 'Missing expected CR after header value'). Falls back to urllib."""
+    err = ""
+    try:
+        res = page.evaluate(JS_FETCH, href)
+        if res.get("b64"):
+            data = base64.b64decode(res["b64"])
+            if data[:4] == b"%PDF":
+                return data, ""
+            err = "browser fetch: not a PDF"
+        else:
+            err = f"browser fetch: HTTP {res.get('status')}"
+    except Exception as e:
+        err = f"browser fetch: {str(e).splitlines()[0][:150]}"
+    try:
+        req = urllib.request.Request(href, headers={"User-Agent": "Mozilla/5.0", "Accept": "*/*"})
+        with urllib.request.urlopen(req, timeout=60) as r:
+            data = r.read()
+        if data[:4] == b"%PDF":
+            return data, ""
+        err += "; urllib: not a PDF"
+    except Exception as e:
+        err += f"; urllib: {str(e)[:150]}"
+    return None, err
+
+
 def download_pdfs(page):
     """Save the daily price-list PDFs (equity, bond, derivatives, USP weekly) once per file name."""
     pdf_dir = Path("data") / "pdfs"
@@ -168,15 +219,12 @@ def download_pdfs(page):
         target = pdf_dir / fname
         if target.exists():
             continue
-        try:
-            resp = page.context.request.get(href, timeout=60000)
-            if resp.ok:
-                target.write_bytes(resp.body())
-                manifest["entries"].append({"section": "pdf", "option": text, "file": f"../../pdfs/{fname}"})
-            else:
-                manifest["errors"].append(f"pdf {fname}: HTTP {resp.status}")
-        except Exception as e:
-            manifest["errors"].append(f"pdf {fname}: {e}")
+        data, err = fetch_pdf(page, href)
+        if data:
+            target.write_bytes(data)
+            manifest["entries"].append({"section": "pdf", "option": text, "file": f"../../pdfs/{fname}"})
+        else:
+            manifest["errors"].append(f"pdf {fname}: {err}")
 
 
 def scrape_stats(page):
