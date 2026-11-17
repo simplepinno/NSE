@@ -150,10 +150,37 @@ def save_api_json():
         manifest["entries"].append({"section": "api", "option": name, "rows": len(rows), "file": fname})
 
 
+def download_pdfs(page):
+    """Save the daily price-list PDFs (equity, bond, derivatives, USP weekly) once per file name."""
+    pdf_dir = Path("data") / "pdfs"
+    pdf_dir.mkdir(parents=True, exist_ok=True)
+    hrefs = page.eval_on_selector_all(
+        "a[href$='.pdf']",
+        "els => els.map(e => [e.innerText.trim(), e.href])",
+    )
+    for text, href in hrefs:
+        if "download" not in text.lower():
+            continue
+        fname = href.split("/")[-1]
+        target = pdf_dir / fname
+        if target.exists():
+            continue
+        try:
+            resp = page.context.request.get(href, timeout=60000)
+            if resp.ok:
+                target.write_bytes(resp.body())
+                manifest["entries"].append({"section": "pdf", "option": text, "file": f"../../pdfs/{fname}"})
+            else:
+                manifest["errors"].append(f"pdf {fname}: HTTP {resp.status}")
+        except Exception as e:
+            manifest["errors"].append(f"pdf {fname}: {e}")
+
+
 def scrape_stats(page):
     page.goto(STATS, wait_until="domcontentloaded", timeout=60000)
     accept_cookies(page)
     settle(page, 2000)
+    download_pdfs(page)
     for tab in STATS_TABS:
         try:
             page.get_by_text(tab, exact=True).first.click(timeout=8000)
@@ -216,6 +243,10 @@ def main():
     print("=== ERRORS ===")
     for err in manifest["errors"]:
         print(err[:300])
+    print("=== EMPTY ON SITE (no rows) ===")
+    for e in manifest["entries"]:
+        if e.get("note") == "no data":
+            print(f"{e['section']} / {e['option']}")
     print("=== NETWORK (first 25) ===")
     for line in summary[:25]:
         print(line)
