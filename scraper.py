@@ -6,6 +6,7 @@ visible table as CSV under data/YYYY-MM-DD/HHMM/. Also logs the background
 """
 import base64
 import csv
+import hashlib
 import json
 import re
 import sys
@@ -26,8 +27,6 @@ STATS_TABS = [
     "USP Statistics",
 ]
 HOME_TABS = ["Gainers", "Losers", "Movers"]
-# PDFs saved flat in data/pdfs/ before the subfolder layout were fetched by this run
-LEGACY_PDF_RUN = ("2026-11-17", "0934")
 
 NOW = datetime.now(ZoneInfo("Africa/Nairobi"))
 OUT = Path("data") / NOW.strftime("%Y-%m-%d") / NOW.strftime("%H%M")
@@ -207,38 +206,66 @@ def fetch_pdf(page, href):
 
 
 def download_pdfs(page):
-    """Save the daily price-list PDFs (equity, bond, derivatives, USP weekly) once per file name.
+    """Check the daily price-list PDFs (equity, bond, derivatives, USP weekly) on every run.
 
-    Layout: data/pdfs/YYYY-MM-DD/HHMM/<file>.pdf, where the folder is the run that first fetched it.
+    A PDF is saved only when it is new or its content changed, under
+    data/pdfs/YYYY-MM-DD/HHMM/<file>.pdf (the run that saved it). Every run also writes
+    pdf_status.csv in its own run folder (new / updated / unchanged, and where the file lives),
+    and data/pdfs/index.csv lists every PDF with the run that first saved it.
     """
     pdf_root = Path("data") / "pdfs"
     pdf_root.mkdir(parents=True, exist_ok=True)
-    # one-time tidy-up: PDFs saved flat by earlier runs go into the folder of the run that fetched them
-    for old in pdf_root.glob("*.pdf"):
-        dest = pdf_root / LEGACY_PDF_RUN[0] / LEGACY_PDF_RUN[1]
-        dest.mkdir(parents=True, exist_ok=True)
-        old.replace(dest / old.name)
     run_dir = pdf_root / NOW.strftime("%Y-%m-%d") / NOW.strftime("%H%M")
-    already = {p.name for p in pdf_root.rglob("*.pdf")}
+    # versions already on disk; folder names sort oldest to newest
+    versions = {}
+    for p in sorted(pdf_root.rglob("*.pdf")):
+        versions.setdefault(p.name, []).append(p)
     hrefs = page.eval_on_selector_all(
         "a[href$='.pdf']",
         "els => els.map(e => [(e.textContent || '').trim(), e.href])",
     )
+    seen = set()
+    rows = []
     for text, href in hrefs:
-        if "download" not in text.lower():
-            continue
         fname = href.split("/")[-1]
-        if fname in already:
+        if "download" not in text.lower() or fname in seen:
             continue
+        seen.add(fname)
         data, err = fetch_pdf(page, href)
-        if data:
-            run_dir.mkdir(parents=True, exist_ok=True)
-            (run_dir / fname).write_bytes(data)
-            already.add(fname)
-            rel = f"{NOW.strftime('%Y-%m-%d')}/{NOW.strftime('%H%M')}/{fname}"
-            manifest["entries"].append({"section": "pdf", "option": text, "file": f"../../pdfs/{rel}"})
-        else:
+        if not data:
             manifest["errors"].append(f"pdf {fname}: {err}")
+            continue
+        digest = hashlib.sha256(data).hexdigest()
+        prev = versions.get(fname, [])
+        if prev and hashlib.sha256(prev[-1].read_bytes()).hexdigest() == digest:
+            status, path = "unchanged", prev[-1]
+        else:
+            status = "updated" if prev else "new"
+            run_dir.mkdir(parents=True, exist_ok=True)
+            path = run_dir / fname
+            path.write_bytes(data)
+            versions.setdefault(fname, []).append(path)
+        rel = path.relative_to(pdf_root).as_posix()
+        first = versions[fname][0].parent.relative_to(pdf_root).as_posix()
+        rows.append([fname, status, f"data/pdfs/{rel}", first, len(data), digest[:12]])
+        manifest["entries"].append(
+            {"section": "pdf", "option": text, "file": f"../../pdfs/{rel}", "status": status}
+        )
+    with open(OUT / "pdf_status.csv", "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["file", "status", "stored_at", "first_saved_run", "bytes", "sha256_12"])
+        w.writerows(rows)
+    with open(pdf_root / "index.csv", "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["file", "first_saved_run", "latest_saved_run", "versions", "latest_path"])
+        for name, paths in sorted(versions.items()):
+            w.writerow([
+                name,
+                paths[0].parent.relative_to(pdf_root).as_posix(),
+                paths[-1].parent.relative_to(pdf_root).as_posix(),
+                len(paths),
+                f"data/pdfs/{paths[-1].relative_to(pdf_root).as_posix()}",
+            ])
 
 
 def scrape_stats(page):
