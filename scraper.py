@@ -26,6 +26,8 @@ STATS_TABS = [
     "USP Statistics",
 ]
 HOME_TABS = ["Gainers", "Losers", "Movers"]
+# PDFs saved flat in data/pdfs/ before the subfolder layout were fetched by this run
+LEGACY_PDF_RUN = ("2026-11-17", "0934")
 
 NOW = datetime.now(ZoneInfo("Africa/Nairobi"))
 OUT = Path("data") / NOW.strftime("%Y-%m-%d") / NOW.strftime("%H%M")
@@ -210,6 +212,12 @@ def download_pdfs(page):
     Layout: data/pdfs/YYYY-MM-DD/HHMM/<file>.pdf, where the folder is the run that first fetched it.
     """
     pdf_root = Path("data") / "pdfs"
+    pdf_root.mkdir(parents=True, exist_ok=True)
+    # one-time tidy-up: PDFs saved flat by earlier runs go into the folder of the run that fetched them
+    for old in pdf_root.glob("*.pdf"):
+        dest = pdf_root / LEGACY_PDF_RUN[0] / LEGACY_PDF_RUN[1]
+        dest.mkdir(parents=True, exist_ok=True)
+        old.replace(dest / old.name)
     run_dir = pdf_root / NOW.strftime("%Y-%m-%d") / NOW.strftime("%H%M")
     already = {p.name for p in pdf_root.rglob("*.pdf")}
     hrefs = page.eval_on_selector_all(
@@ -231,18 +239,6 @@ def download_pdfs(page):
             manifest["entries"].append({"section": "pdf", "option": text, "file": f"../../pdfs/{rel}"})
         else:
             manifest["errors"].append(f"pdf {fname}: {err}")
-
-
-def dump_html(page, opt):
-    """Keep the raw HTML of the bond note tables (diagnosis for the messy Acorn/Centum/Chase output)."""
-    try:
-        html = page.evaluate(
-            "() => [...document.querySelectorAll('table')].filter(t => t.offsetParent !== null)"
-            ".map(t => t.outerHTML).join('\\n<!-- next table -->\\n')"
-        )
-        (OUT / f"raw_{slug(opt)}.html").write_text(html[:400000], encoding="utf-8")
-    except Exception as e:
-        manifest["errors"].append(f"raw html {opt}: {str(e)[:150]}")
 
 
 def scrape_stats(page):
@@ -267,8 +263,6 @@ def scrape_stats(page):
                     page.locator("select:visible").first.select_option(label=opt)
                     settle(page)
                     save(tab, opt, visible_tables(page), as_of(page))
-                    if "MEDIUM TERM NOTE" in opt.upper():
-                        dump_html(page, opt)
                 except Exception as e:
                     manifest["errors"].append(f"{tab}/{opt}: {e}")
         except Exception as e:
