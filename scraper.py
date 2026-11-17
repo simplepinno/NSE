@@ -57,7 +57,10 @@ def save(section, option, tables, stamp):
     """Write each table with data rows to CSV; record empties in the manifest."""
     saved = 0
     for i, rows in enumerate(tables):
-        entry = {"section": section, "option": option, "table": i, "rows": len(rows) - 1, "as_of": stamp}
+        # skip placeholder tables whose cells are all blank (hidden tabs)
+        if not any(c.strip() for r in rows for c in r):
+            continue
+        entry ={"section": section, "option": option, "table": i, "rows": len(rows) - 1, "as_of": stamp}
         if len(rows) <= 1:
             entry["note"] = "no data"
             manifest["entries"].append(entry)
@@ -156,7 +159,7 @@ def download_pdfs(page):
     pdf_dir.mkdir(parents=True, exist_ok=True)
     hrefs = page.eval_on_selector_all(
         "a[href$='.pdf']",
-        "els => els.map(e => [e.innerText.trim(), e.href])",
+        "els => els.map(e => [(e.textContent || '').trim(), e.href])",
     )
     for text, href in hrefs:
         if "download" not in text.lower():
