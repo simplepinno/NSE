@@ -205,9 +205,13 @@ def fetch_pdf(page, href):
 
 
 def download_pdfs(page):
-    """Save the daily price-list PDFs (equity, bond, derivatives, USP weekly) once per file name."""
-    pdf_dir = Path("data") / "pdfs"
-    pdf_dir.mkdir(parents=True, exist_ok=True)
+    """Save the daily price-list PDFs (equity, bond, derivatives, USP weekly) once per file name.
+
+    Layout: data/pdfs/YYYY-MM-DD/HHMM/<file>.pdf, where the folder is the run that first fetched it.
+    """
+    pdf_root = Path("data") / "pdfs"
+    run_dir = pdf_root / NOW.strftime("%Y-%m-%d") / NOW.strftime("%H%M")
+    already = {p.name for p in pdf_root.rglob("*.pdf")}
     hrefs = page.eval_on_selector_all(
         "a[href$='.pdf']",
         "els => els.map(e => [(e.textContent || '').trim(), e.href])",
@@ -216,15 +220,29 @@ def download_pdfs(page):
         if "download" not in text.lower():
             continue
         fname = href.split("/")[-1]
-        target = pdf_dir / fname
-        if target.exists():
+        if fname in already:
             continue
         data, err = fetch_pdf(page, href)
         if data:
-            target.write_bytes(data)
-            manifest["entries"].append({"section": "pdf", "option": text, "file": f"../../pdfs/{fname}"})
+            run_dir.mkdir(parents=True, exist_ok=True)
+            (run_dir / fname).write_bytes(data)
+            already.add(fname)
+            rel = f"{NOW.strftime('%Y-%m-%d')}/{NOW.strftime('%H%M')}/{fname}"
+            manifest["entries"].append({"section": "pdf", "option": text, "file": f"../../pdfs/{rel}"})
         else:
             manifest["errors"].append(f"pdf {fname}: {err}")
+
+
+def dump_html(page, opt):
+    """Keep the raw HTML of the bond note tables (diagnosis for the messy Acorn/Centum/Chase output)."""
+    try:
+        html = page.evaluate(
+            "() => [...document.querySelectorAll('table')].filter(t => t.offsetParent !== null)"
+            ".map(t => t.outerHTML).join('\\n<!-- next table -->\\n')"
+        )
+        (OUT / f"raw_{slug(opt)}.html").write_text(html[:400000], encoding="utf-8")
+    except Exception as e:
+        manifest["errors"].append(f"raw html {opt}: {str(e)[:150]}")
 
 
 def scrape_stats(page):
@@ -249,6 +267,8 @@ def scrape_stats(page):
                     page.locator("select:visible").first.select_option(label=opt)
                     settle(page)
                     save(tab, opt, visible_tables(page), as_of(page))
+                    if "MEDIUM TERM NOTE" in opt.upper():
+                        dump_html(page, opt)
                 except Exception as e:
                     manifest["errors"].append(f"{tab}/{opt}: {e}")
         except Exception as e:
