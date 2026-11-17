@@ -9,6 +9,7 @@ import csv
 import hashlib
 import json
 import re
+import subprocess
 import sys
 import urllib.request
 from datetime import datetime
@@ -344,6 +345,10 @@ def main():
         print(line)
     files = sum(1 for e in manifest["entries"] if "file" in e)
     print(f"Saved {files} tables, {len(manifest['errors'])} errors, {len(net_log)} network calls logged")
+    try:  # update data/merged/ (never lets a merge problem fail the run)
+        subprocess.run([sys.executable, "merge.py"], check=False, timeout=300)
+    except Exception as e:
+        print(f"merge skipped: {e}")
     sys.exit(0 if files else 1)
 
 
