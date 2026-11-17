@@ -1,9 +1,7 @@
 name: NSE snapshot
 
 on:
-  schedule:
-    # 07:00-12:00 UTC = 10:00-15:00 EAT, Mon-Fri, on the hour
-    - cron: "0 7-12 * * 1-5"
+  # Started by cron-job.org at 10:00-15:00 EAT, Mon-Fri (calls the workflow_dispatch API)
   workflow_dispatch: {}
 
 permissions:
