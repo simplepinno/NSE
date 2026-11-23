@@ -300,7 +300,10 @@ def scrape_stats(page):
 def main():
     with sync_playwright() as p:
         browser = p.chromium.launch()
-        page = browser.new_context(viewport={"width": 1280, "height": 1800}).new_page()
+        ctx = browser.new_context(viewport={"width": 1280, "height": 1800})
+        # block web fonts so screenshots never hang on "waiting for fonts to load"
+        ctx.route("**/*.{woff,woff2,ttf,otf}", lambda route: route.abort())
+        page = ctx.new_page()
 
         def on_response(resp):
             try:
@@ -322,7 +325,10 @@ def main():
                 fn(page)
             except Exception as e:
                 manifest["errors"].append(f"{fn.__name__}: {e}")
-                page.screenshot(path=str(OUT / f"error_{fn.__name__}.png"))
+                try:
+                    page.screenshot(path=str(OUT / f"error_{fn.__name__}.png"), timeout=5000)
+                except Exception as se:
+                    manifest["errors"].append(f"{fn.__name__} screenshot failed: {se}")
         browser.close()
 
     (OUT / "network_log.json").write_text(json.dumps(net_log, indent=1), encoding="utf-8")
