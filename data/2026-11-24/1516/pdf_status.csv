@@ -1,0 +1,5 @@
+file,status,stored_at,first_saved_run,bytes,sha256_12
+23-NOV-26.pdf,unchanged,data/pdfs/2026-11-23/1617/23-NOV-26.pdf,2026-11-23/1617,1032568,3b120515bd4f
+BondPrices_24-NOV-2026.pdf,new,data/pdfs/2026-11-24/1516/BondPrices_24-NOV-2026.pdf,2026-11-24/1516,1296786,c770d7b5b77b
+Derivatives_Pricelist_23-NOV-2026.pdf,unchanged,data/pdfs/2026-11-23/1617/Derivatives_Pricelist_23-NOV-2026.pdf,2026-11-23/1617,135903,89ffb47ea26e
+Unquoted-Securities-Platform-Ibuka-Weekly-Summary_13-11-2026.pdf,unchanged,data/pdfs/2026-11-17/1616/Unquoted-Securities-Platform-Ibuka-Weekly-Summary_13-11-2026.pdf,2026-11-17/1616,403586,5e83094d0df8
